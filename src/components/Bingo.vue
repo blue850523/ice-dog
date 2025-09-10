@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
+import { getLocal, setLocal } from '../utils/index.ts'
+import ThemeSelect from './ThemeSelect.vue'
+import DarkMode from './DarkMode.vue'
 
 interface Options {
-  label: string
-  value: number
+  label: string | number
+  value: string | number
 }
 interface BingoItem {
   /** 賓果數字 */
@@ -19,10 +22,7 @@ interface HistoryItem {
   /** 賓果格位置 x */
   index2: number
 }
-type Status = 
-  /** 初始化 */
-  'init' | 
-  /** 設定數字中 */
+type Status = /** 設定數字中 */
   'setting' | 
   /** 設定數字完成 */
   'settingDone' | 
@@ -32,16 +32,16 @@ type Status =
   'end'
 
 /** 每行個數 */
-const numberOfRow = ref<number>(3)
+const size = ref<number>(3)
 /** 每行個數選項 */
-const numberOfRowOptions = ref<Options[]>([
+const sizeOptions = ref<Options[]>([
   { label: '3 x 3', value: 3 },
   { label: '5 x 5', value: 5 },
 ])
 /** 賓果格 */
 const bingoData = ref<BingoItem[][]>([])
 /** 狀態 */
-const status = ref<Status>('init')
+const status = ref<Status>('setting')
 /** 目前設定第幾個 */
 const nowSettingNumber = ref<number>(1)
 /** 設置歷史紀錄, 隨機產生時沒有設置歷史紀錄 */
@@ -51,8 +51,8 @@ const gameHistory = ref<HistoryItem[]>([])
 
 /** 產生賓果盤 */
 const setBingo = (): void => {
-  bingoData.value = Array.from({ length: numberOfRow.value }, (_, _index) => {
-    return Array.from({ length: numberOfRow.value }, (_, _index2) => {
+  bingoData.value = Array.from({ length: size.value }, (_, _index) => {
+    return Array.from({ length: size.value }, (_, _index2) => {
       return {
         number: 0,
         selected: false
@@ -67,7 +67,7 @@ const setBingo = (): void => {
 /** 隨機產生賓果盤 */
 const random = (): void => {
   // 產生數字陣列
-  const numbers = Array.from({ length: numberOfRow.value * numberOfRow.value }, (_, index) => {
+  const numbers = Array.from({ length: size.value * size.value }, (_, index) => {
     return index + 1
   })
   // 打亂數字陣列
@@ -77,10 +77,10 @@ const random = (): void => {
     // 交換
     ;[numbers[i], numbers[randomIndex]] = [numbers[randomIndex], numbers[i]]
   }
-  bingoData.value = Array.from({ length: numberOfRow.value }, (_, index) => {
-    return Array.from({ length: numberOfRow.value }, (_, index2) => {
+  bingoData.value = Array.from({ length: size.value }, (_, index) => {
+    return Array.from({ length: size.value }, (_, index2) => {
       return {
-        number: numbers[index * numberOfRow.value + index2],
+        number: numbers[index * size.value + index2],
         selected: false
       }
     })
@@ -120,7 +120,7 @@ const setNumber = (index: number, index2: number): void => {
   nowSettingNumber.value += 1
   settingHistory.value.push([index, index2])
   // 設定完成
-  if (nowSettingNumber.value > numberOfRow.value * numberOfRow.value) {
+  if (nowSettingNumber.value > size.value * size.value) {
     status.value = 'settingDone'
   }
 }
@@ -143,58 +143,100 @@ const clickBingoItem = (index: number, index2: number): void => {
   }
 }
 
+/** 設定本地儲存資料 */
+const setLocalData = (): void => {
+  size.value = getLocal<number>('size') ?? size.value
+
+  const bingo = getLocal('bingoData') as BingoItem[][]
+  if (bingo) {
+    bingoData.value = bingo
+  } else {
+    return setBingo()
+  }
+
+  status.value = getLocal('status') ?? status.value
+  nowSettingNumber.value = getLocal('nowSettingNumber') ?? nowSettingNumber.value
+  settingHistory.value = getLocal('settingHistory') ?? settingHistory.value
+  gameHistory.value = getLocal('gameHistory') ?? gameHistory.value
+}
+
+watch(
+  [size, bingoData, status, nowSettingNumber, settingHistory, gameHistory],
+  ([newSize, newBingo, newStatus, newNowSetting, newSettingHistory, newGameHistory]) => {
+    setLocal('size', newSize)
+    setLocal('bingoData', newBingo)
+    setLocal('status', newStatus)
+    setLocal('nowSettingNumber', newNowSetting)
+    setLocal('settingHistory', newSettingHistory)
+    setLocal('gameHistory', newGameHistory)
+  },
+  { deep: true, immediate: false }
+)
+
 onMounted(() => {
-  setBingo()
+  setLocalData()
 })
 </script>
 
 <template>
-  <div class="container">
+  <div class="container !pt-20 md:pt-16 bg-[var(--color-theme-50)] dark:bg-[var(--color-theme-950)] text-[var(--color-theme-950)] dark:text-[var(--color-theme-50)]">
     <!-- header -->
-    <header>
-      <div class="headerRow">
-        <el-select v-model="numberOfRow" style="width: 5rem; margin-right: 1.25rem" @change="setBingo">
+    <header class="flex items-center justify-center fixed top-0 left-1/2 translate-x-[-50%] w-full md:w-3xl h-16 bg-[var(--color-theme-200)] z-10">
+      <div class="flex items-center justify-center flex-wrap ">
+        <DarkMode class="mr-2" />
+        <ThemeSelect class="mr-2" />
+        <el-select 
+          v-model="size" 
+          class="select !w-20 mr-2" 
+          :popper-class="'selectOption'"
+          @change="setBingo">
           <el-option
-            v-for="item in numberOfRowOptions"
-            :key="item.value"
+            v-for="item in sizeOptions"
+            :key="`sizeOption-${item.value}`"
             :label="item.label"
             :value="item.value"
           />
         </el-select>
-        <el-button type="primary" @click="random">隨機選號</el-button>
+        <button class="button mr-2" type="button" @click="setBingo">清空</button>
+        <button class="button" type="button" @click="random">隨機</button>
       </div>
     </header>
 
-    <div class="bingo">
+    <!-- bingo board -->
+    <div class="relative flex items-center justify-center flex-col mt-[0] mx-[auto] mb-4 w-[fit-content] border-[1px] border-[var(--color-theme-800)] bg-[#ffffff]">
       <div 
         v-for="(item, index) in bingoData" 
         :key="`bingoRow-${index}`" 
-        class="bingoRow">
+        class="flex">
         <div 
           v-for="(item2, index2) in item" 
           :key="`bingoItem-${index}-${index2}`" 
-          class="bingoItem"
-          :class="{ selected: item2.selected }" 
+          class="flex items-center justify-center w-16 md:w-20 h-16 md:h-20 text-2xl border-[1px] border-[var(--color-theme-800)] text-[var(--color-theme-800)] cursor-pointer hover:bg-[var(--color-theme-200)] transition-all duration-200"
+          :class="item2.selected && 'bg-[var(--color-theme-300)]'" 
           @click="clickBingoItem(index, index2)">
-          {{ item2.number === 0 ? '' : item2.number }}
+          {{ item2.number || '' }}
         </div>
       </div>
     </div>
 
-    <div class="settingRow">
-      <div v-if="status === 'setting'" class="nowSettingNumber">{{ status }}下個數字：{{ nowSettingNumber }}</div>
-      <el-button v-if="(status === 'setting' || status === 'settingDone') && nowSettingNumber > 1" style="margin-right: .625rem" type="primary" @click="backNumber">上一步</el-button>
-      <el-button v-if="status === 'settingDone'" style="margin-right: .625rem" type="primary" @click="start">開始</el-button>
-      <el-button v-if="status === 'start' && gameHistory.length >= 1" type="primary" @click="backHistory">上一步</el-button>
+    <!-- action -->
+    <div class="flex items-center justify-center flex-wrap">
+      <div v-if="status === 'setting'" class="w-full text-xl text-center mb-4">下個數字：{{ nowSettingNumber }}</div>
+      <div v-if="['setting', 'settingDone', 'start'].includes(status)" class="flex items-center justify-center mb-4 space-x-2">
+        <button v-if="(status === 'setting' || status === 'settingDone') && nowSettingNumber > 1" class="button" type="button" @click="backNumber">上一步</button>
+        <button v-if="status === 'settingDone'" class="button" type="button" @click="start">開始</button>
+        <button v-if="status === 'start' && gameHistory.length >= 1" class="button" type="button" @click="backHistory">上一步</button>
+      </div>
     </div>
 
-    <div v-if="status === 'start'" class="history">
-      <span style="margin-bottom: .625rem">歷史紀錄</span>
-      <div class="historyRow">
+    <!-- history -->
+    <div v-if="status === 'start'" class="flex items-center justify-center flex-col">
+      <span class="mb-2 text-xl font-bold text-[var(--color-theme-800)]">歷史紀錄</span>
+      <div class="flex items-center justify-center flex-wrap w-full">
         <div 
           v-for="item in gameHistory" 
           :key="`history-${item.number}`"
-          class="historyItem"
+          class="flex items-center justify-center m-1 w-7.5 h-7.5 text-lg md:text-base text-white bg-[var(--color-theme-500)] rounded-full"
         >
           {{ item.number }}
         </div>
@@ -204,98 +246,30 @@ onMounted(() => {
 </template>
 
 <style lang="scss" scoped>
-.container {
-  padding-top: 4rem;
-  background-color: #f0f9ff;
-  color: #062e4b;
-}
-header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 3rem;
-  background-color: #b8e5ff;
-}
-.headerRow {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.settingRow {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-bottom: 1.25rem;
-}
-.nowSettingNumber {
-  width: 100%;
-  margin-bottom: 1.25rem;
-  text-align: center;
-}
-.bingo {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  margin: 0 auto 1.25rem;
-  width: fit-content;
-  border: 1px solid #045888;
-  background-color: #ffffff;
-  .bingoRow {
-    display: flex;
-    .bingoItem {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 5rem;
-      height: 5rem;
-      border: 1px solid #045888;
-      color: #062e4b;
-      cursor: pointer;
-      &:hover {
-        background-color: #b8e5ff;
-      }
-      &.selected {
-        background-color: #6ccdff;
-      }
-    }
+:deep(.el-select.select) {
+  .el-select__wrapper {
+    background-color: var(--color-theme-50);
+    box-shadow: none;
+  }
+  .el-select__wrapper.is-focused {
+    box-shadow: 0 0 0 1px var(--color-theme-600);
+  }
+  .el-select__selected-item {
+    color: var(--color-theme-900);
+  }
+  .el-select__suffix .el-icon {
+    color: var(--color-theme-900);
   }
 }
-.history {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  .historyRow {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-    width: 100%;
-    .historyItem {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: .25rem;
-      width: 1.875rem;
-      height: 1.875rem;
-      color: #ffffff;
-      background-color: #09a3ee;
-      border-radius: 50%;
-    }
+.selectOption {
+  .el-select-dropdown__item {
+    color: var(--color-theme-900);
   }
-}
-
-@media (max-width: 768px) {
-  .bingoItem {
-    width: 4rem !important;
-    height: 4rem !important;
+  .el-select-dropdown__item.is-selected {
+    color: var(--color-theme-500);
+  }
+  .el-select-dropdown__item.is-hovering {
+    background-color: var(--color-theme-50);
   }
 }
 </style>
