@@ -36,6 +36,7 @@ const size = ref<number>(3)
 /** 每行個數選項 */
 const sizeOptions = ref<Options[]>([
   { label: '3 x 3', value: 3 },
+  { label: '4 x 4', value: 4 },
   { label: '5 x 5', value: 5 },
 ])
 /** 賓果格 */
@@ -221,22 +222,25 @@ onMounted(() => {
 
     <!-- action -->
     <div class="flex items-center justify-center flex-wrap">
-      <div v-if="status === 'setting'" class="w-full text-xl text-center mb-4">下個數字：{{ nowSettingNumber }}</div>
-      <div v-if="['setting', 'settingDone', 'start'].includes(status)" class="flex items-center justify-center mb-4 space-x-2">
-        <button v-if="(status === 'setting' || status === 'settingDone') && nowSettingNumber > 1" class="button" type="button" @click="backNumber">上一步</button>
-        <button v-if="status === 'settingDone'" class="button" type="button" @click="start">開始</button>
-        <button v-if="status === 'start' && gameHistory.length >= 1" class="button" type="button" @click="backHistory">上一步</button>
+      <div v-if="status === 'setting'" class="mb-4 w-full text-xl text-center font-bold text-theme-color">下個數字：{{ nowSettingNumber }}</div>
+      <div 
+        v-if="(status === 'setting' || status === 'settingDone') || (status === 'start' && gameHistory.length >= 1)" 
+        class="flex items-center justify-center mb-4 space-x-2"
+      >
+        <button v-if="(status === 'setting' || status === 'settingDone') && nowSettingNumber > 1" class="button button-md" type="button" @click="backNumber">上一步</button>
+        <button v-if="status === 'settingDone'" class="button button-md" type="button" @click="start">開始</button>
+        <button v-if="status === 'start' && gameHistory.length >= 1" class="button button-md" type="button" @click="backHistory">上一步</button>
       </div>
     </div>
 
     <!-- history -->
     <div v-if="status === 'start'" class="flex items-center justify-center flex-col">
-      <span class="mb-2 text-xl font-bold text-[var(--color-theme-800)]">歷史紀錄</span>
+      <span class="mb-2 text-xl font-bold text-theme-color">歷史紀錄</span>
       <div class="flex items-center justify-center flex-wrap w-full">
         <div 
           v-for="item in gameHistory" 
           :key="`history-${item.number}`"
-          class="flex items-center justify-center m-1 w-7.5 h-7.5 text-lg md:text-base text-white bg-[var(--color-theme-500)] rounded-full"
+          class="flex items-center justify-center m-1 w-7.5 h-7.5 text-lg md:text-base text-[var(--color-theme-50)] bg-[var(--color-theme-500)] rounded-full"
         >
           {{ item.number }}
         </div>

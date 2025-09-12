@@ -4,6 +4,11 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @layer components {
+  .text-theme-color {
+    @apply
+      text-[var(--color-theme-900)] 
+      dark:text-[var(--color-theme-200)]
+  }
   .button {
     @apply
       flex 
@@ -24,6 +29,13 @@
       transition-all 
       duration-100 
       ease-linear;
+    &.button-md {
+      @apply 
+        h-12
+        px-4.5
+        py-3
+        text-xl
+    }
   }
 }
 

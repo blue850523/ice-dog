@@ -6,17 +6,20 @@ interface Options {
   value: string | number
 }
 interface ThemeOptions extends Options {
-  color: string
+  /** 預覽色 */
+  PreviewColor: string
+  /** 文字色 */
+  textColor: string
 }
 /** 系統主題顏色 */
 const systemTheme = ref<string>('theme-blue')
 /** 系統主題顏色選項 */
 const themeOptions = ref<ThemeOptions[]>([
-  { color: '#33bcfd', label: '藍', value: 'theme-blue' },
-  { color: '#f076b6', label: '粉', value: 'theme-pink' },
-  { color: '#efad32', label: '黃', value: 'theme-yellow' },
-  { color: '#49bb77', label: '綠', value: 'theme-green' },
-  { color: '#bb96ea', label: '紫', value: 'theme-purple' },
+  { label: '藍', value: 'theme-blue', PreviewColor: 'linear-gradient(to right, #f0f9ff, #09a3ee)', textColor: '#33bcfd' },
+  { label: '粉', value: 'theme-pink', PreviewColor: 'linear-gradient(to right, #fdf2f8, #e74a97)', textColor: '#f076b6' },
+  { label: '黃', value: 'theme-yellow', PreviewColor: 'linear-gradient(to right, #fdf8e9, #de8f14)', textColor: '#efad32' },
+  { label: '綠', value: 'theme-green', PreviewColor: 'linear-gradient(to right, #eefbf2, #29a05d)', textColor: '#49bb77' },
+  { label: '紫', value: 'theme-purple', PreviewColor: 'linear-gradient(to right, #faf7fd, #8b4fce)', textColor: '#bb96ea' },
 ])
 /** 初始化系統主題顏色 */
 const initSystemTheme = (): void => {
@@ -55,9 +58,9 @@ onMounted(() => {
       :label="item.label"
       :value="item.value"
     >
-      <div class="flex items-center justify-baseline">
-        <div class="w-4 h-4 rounded-sm mr-1.5" :style="{ backgroundColor: item.color }" />
-        <span :style="{ color: item.color }">{{ item.label }}</span>
+      <div class="flex items-center justify-between">
+        <div class="w-12 h-4 rounded-sm mr-3" :style="{ backgroundImage: item.PreviewColor }" />
+        <span :style="{ color: item.textColor }">{{ item.label }}</span>
       </div>
     </el-option>
   </el-select>
