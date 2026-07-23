@@ -53,3 +53,34 @@ body {
     max-width: 48rem;
   }
 }
+
+/* 1. 提高 Select 本體的權重（最外層加上 body 提升層級）*/
+body {
+  .el-select.select {
+    .el-select__wrapper {
+      background-color: var(--color-theme-50);
+      box-shadow: none;
+    }
+    .el-select__wrapper.is-focused {
+      box-shadow: 0 0 0 1px var(--color-theme-600);
+    }
+    .el-select__selected-item {
+      color: var(--color-theme-900);
+    }
+    .el-select__suffix .el-icon {
+      color: var(--color-theme-900);
+    }
+  }
+  .selectOption {
+    .el-select-dropdown__item {
+      color: var(--color-theme-900);
+    }
+    .el-select-dropdown__item.is-selected {
+      color: var(--color-theme-500);
+      font-weight: bold;
+    }
+    .el-select-dropdown__item.is-hovering {
+      background-color: var(--color-theme-50);
+    }
+  }
+}

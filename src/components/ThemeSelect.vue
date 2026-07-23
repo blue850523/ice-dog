@@ -49,7 +49,7 @@ onMounted(() => {
 <template>
   <el-select
     v-model="systemTheme"
-    class="!w-16 select" 
+    class="w-24! select" 
     :popper-class="'selectOption'"
     @change="changeTheme">
     <el-option
@@ -65,14 +65,3 @@ onMounted(() => {
     </el-option>
   </el-select>
 </template>
-
-<style lang="scss" scoped>
-:deep(.el-select-dropdown__item.is-selected) {
-  font-weight: bold;
-}
-.selectOption {
-  .el-select-dropdown__item.is-hovering {
-    background-color: var(--color-theme-50);
-  }
-}
-</style>

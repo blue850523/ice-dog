@@ -8,3 +8,11 @@ https://blue850523.github.io/ice-dog/
 
 ## 打包完發布
 sh deploy.sh
+
+##
+- vue3
+- TypeScript
+- tailwind
+- pinia
+- element Plus
+- svgtofont

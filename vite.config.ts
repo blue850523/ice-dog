@@ -26,5 +26,5 @@ export default defineConfig({
       useSource: true,
     }),
   ],
-  base: '/ice-dog/',
+  base: '/ice-dog',
 })

@@ -1,0 +1,28 @@
+@font-face {
+  font-family: "svg-font";
+  src: url('svg-font.eot?t=1784798102957'); /* IE9*/
+  src: url('svg-font.eot?t=1784798102957#iefix') format('embedded-opentype') /* IE6-IE8 */,
+  url('svg-font.woff2?t=1784798102957') format('woff2'),
+  url('svg-font.woff?t=1784798102957') format('woff'),
+  url('svg-font.ttf?t=1784798102957') format('truetype'),
+  url('svg-font.svg?t=1784798102957') format('svg');
+}
+
+[class^="svg-font-"], [class*=" svg-font-"] {
+  font-family: 'svg-font' !important;
+  font-style:normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
+
+
+.svg-font-moon::before { content: "\ea01"; }
+.svg-font-setting::before { content: "\ea02"; }
+.svg-font-sun::before { content: "\ea03"; }
+
+
+$svg-font-moon: '\ea01';
+$svg-font-setting: '\ea02';
+$svg-font-sun: '\ea03';
