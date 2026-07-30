@@ -170,7 +170,7 @@ watch(bingoLines, (newValue, oldValue) => {
   }
 })
 
-/** 設定本地儲存資料 */
+/** 還原本地儲存資料 */
 const setLocalData = (): void => {
   const bingo = getLocal('bingoData') as BingoItem[][]
   if (bingo) {

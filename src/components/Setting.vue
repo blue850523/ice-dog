@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { ref, onMounted, watch, computed } from 'vue'
+import { ref, computed } from 'vue'
 import { storeToRefs } from "pinia"
-import { getLocal, setLocal } from '../utils/index.ts'
 import ThemeSelect from './ThemeSelect.vue'
 import type { Options } from './types.ts'
 import { useSettingStore } from '../store/setting.ts'
@@ -40,25 +39,6 @@ const winLineOptions = computed((): Options[] => {
 const handleChangeWinLine = () => {
   settingStore.setWinLine(selectWinLine.value)
 }
-
-/** 設定本地儲存資料 */
-const setLocalData = (): void => {
-  selectSize.value = getLocal<number>('size') ?? selectSize.value
-  selectWinLine.value = getLocal<number>('winLine') ?? selectWinLine.value 
-}
-
-watch(
-  [selectSize, selectWinLine],
-  ([newSelectSize, newSelectWinLine]) => {
-    setLocal('size', newSelectSize)
-    setLocal('winLine', newSelectWinLine)
-  },
-  { deep: true, immediate: false }
-)
-
-onMounted(() => {
-  setLocalData()
-})
 </script>
 
 <template>
