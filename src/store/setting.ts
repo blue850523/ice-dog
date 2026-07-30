@@ -13,11 +13,11 @@ export const useSettingStore = defineStore('setting', {
     init() {
       const size = getLocal('size')
       const winLine = getLocal('winLine')
-      if (size !== null) {
+      if (size !== null && size) {
         this.size = Number(size)
       }
 
-      if (winLine !== null) {
+      if (winLine !== null && winLine) {
         this.winLine = Number(winLine)
       }
     },
