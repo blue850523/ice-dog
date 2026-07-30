@@ -40,9 +40,7 @@ onMounted(() => {
     class="flex items-center justify-center h-8 w-8 cursor-pointer select-none rounded bg-theme-50 hover:bg-theme-300 transition-all"
     @click="changeTheme(systemMode === 'dark' ? 'light' : 'dark')"
   >
-    <span>
-      <i v-show="systemMode === 'light'" class="svg-font-sun text-theme-900 text-3xl"></i>
-      <i v-show="systemMode === 'dark'" class="svg-font-moon text-theme-900 text-3xl"></i>
-    </span>
+    <i v-show="systemMode === 'light'" class="svg-font-sun text-theme-900 text-3xl"></i>
+    <i v-show="systemMode === 'dark'" class="svg-font-moon text-theme-900 text-3xl"></i>
   </button>
 </template>
