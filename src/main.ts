@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import App from './App.vue'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
@@ -11,6 +12,8 @@ import './assets/fonts/svg-font.css'
 
 const app = createApp(App)
 const pinia = createPinia()
+// pinia自動存到local套件
+pinia.use(piniaPluginPersistedstate)
 
 app.use(pinia)
 app.use(ElementPlus)
