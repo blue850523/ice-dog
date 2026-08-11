@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { storeToRefs } from "pinia"
-import ThemeSelect from './ThemeSelect.vue'
 import type { Options } from './types.ts'
 import { useSettingStore } from '../store/setting.ts'
 

@@ -3,8 +3,6 @@ import { ref, onMounted, watch, computed } from 'vue'
 import { storeToRefs } from "pinia"
 import { getLocal, setLocal } from '../utils/index.ts'
 import { useSettingStore } from '../store/setting.ts'
-import DarkMode from './DarkMode.vue'
-import Setting from './Setting.vue'
 import confetti from 'canvas-confetti'
 
 interface BingoItem {

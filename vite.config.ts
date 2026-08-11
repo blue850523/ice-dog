@@ -2,7 +2,11 @@ import path from 'path'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import tailwindcss from '@tailwindcss/vite'
-import ElementPlus from 'unplugin-element-plus/vite'
+import { analyzer } from "vite-bundle-analyzer"
+import AutoImport from 'unplugin-auto-import/vite'
+import Components from 'unplugin-vue-components/vite'
+// ElementPlus 自動按需載入
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -22,8 +26,17 @@ export default defineConfig({
   plugins: [
     vue(),
     tailwindcss(),
-    ElementPlus({
-      useSource: true,
+    analyzer({
+      // npm run analyze
+      // 當環境變數有 ANALYZE 時才自動在瀏覽器中打開bundle-analyzer可視化結果
+      analyzerMode: process.env.ANALYZE ? 'server' : 'static',
+      openAnalyzer: process.env.ANALYZE ? true : false,
+    }),
+    AutoImport({
+      resolvers: [ElementPlusResolver()],
+    }),
+    Components({
+      resolvers: [ElementPlusResolver()],
     }),
   ],
   build: {
