@@ -22,3 +22,12 @@ sh deploy.sh
 - pinia
 - element Plus
 - svgtofont
+
+## 雜項
+- 自動按需載入前
+<img width="576" height="268" alt="image" src="https://github.com/user-attachments/assets/2b5bcf57-3fb3-4678-a1e7-21383059be83" />
+<img width="576" height="268" alt="image" src="https://github.com/user-attachments/assets/d93d895b-13e2-4db8-89aa-ff96b341fc74" />
+
+- 自動按需載入後
+<img width="576" height="268" alt="image" src="https://github.com/user-attachments/assets/dc159307-d1fa-44e7-8a53-b486b13ab29a" />
+<img width="576" height="268" alt="image" src="https://github.com/user-attachments/assets/dd9f0583-6bc7-483b-8a7a-2280498d391c" />
