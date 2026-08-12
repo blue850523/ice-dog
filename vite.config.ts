@@ -7,6 +7,7 @@ import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 // ElementPlus 自動按需載入
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -38,6 +39,33 @@ export default defineConfig({
     Components({
       resolvers: [ElementPlusResolver()],
     }),
+    VitePWA({
+      registerType: 'autoUpdate',   // 自動更新模式
+      injectRegister: 'auto',       // 自動在 HTML 注入註冊代碼
+      manifest: {
+        name: '冰狗',                // App 完整名稱
+        short_name: '冰狗',          // 桌面上顯示的簡短名稱
+        description: '冰狗哦',
+        theme_color: '#ffffff',      // App 機殼頂部顏色
+        background_color: '#ffffff', // 開啟 App 時的啟動畫面背景色
+        display: 'standalone',       // 獨立視窗模式，隱藏瀏覽器網址列，看起來像原生 App
+        icons: [
+          {
+            src: 'ice-dog-192x192.png',      // 圖示路徑，放在 public 資料夾下
+            sizes: '192x192',
+            type: 'image/png'
+          },
+          {
+            src: 'ice-dog-512x512.png',
+            sizes: '512x512',
+            type: 'image/png'
+          }
+        ]
+      },
+      devOptions: {
+        enabled: true, // 開發環境sw是否啟用
+      },
+    })
   ],
   build: {
     rollupOptions: {
@@ -64,5 +92,5 @@ export default defineConfig({
       }
     }
   },
-  base: '/ice-dog',
+  base: '/ice-dog/',
 })

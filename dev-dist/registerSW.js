@@ -1,0 +1,1 @@
+if('serviceWorker' in navigator) navigator.serviceWorker.register('/ice-dog/dev-sw.js?dev-sw', { scope: '/ice-dog/', type: 'classic' })
